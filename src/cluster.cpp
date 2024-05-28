@@ -75,7 +75,8 @@ std::vector<size_t> axisAlignedCluster(std::vector<Vector3> positions,
 }
 
 std::vector<size_t> cluster(TetMesh t, size_t clusterSize) {
-    return axisAlignedCluster(t.vertexPositions(), clusterSize);
+    size_t nClusters;
+    return axisAlignedCluster(t.vertexPositions(), clusterSize, nClusters);
 }
 
 } // CompArch

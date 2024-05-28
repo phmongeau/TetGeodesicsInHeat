@@ -508,10 +508,13 @@ TetMesh* TetMesh::loadFromFile(string elePath) {
             double x, y, z;
             ss >> idx >> x >> y >> z;
             verts.emplace_back(Vector3{x, y, z});
-            assert(idx == verts.size());
+            assert(idx + 1 == verts.size());
         }
 
         node.close();
+    }
+    else {
+        cerr << "Error: could not open nodePath: " << nodePath << "\n";
     }
 
     std::vector<std::array<size_t, 4>> tets;
@@ -525,26 +528,29 @@ TetMesh* TetMesh::loadFromFile(string elePath) {
             istringstream ss(line);
             size_t idx, a, b, c, d;
             ss >> idx >> a >> b >> c >> d;
-            assert(a <= verts.size());
-            assert(b <= verts.size());
-            assert(c <= verts.size());
-            assert(d <= verts.size());
-            assert(a > 0);
-            assert(b > 0);
-            assert(c > 0);
-            assert(d > 0);
+            assert(a < verts.size());
+            assert(b < verts.size());
+            assert(c < verts.size());
+            assert(d < verts.size());
+            // assert(a >= 0);
+            // assert(b >= 0);
+            // assert(c >= 0);
+            // assert(d >= 0);
 
             // 1-indexed?
-            tets.emplace_back(std::array<size_t, 4>{a - 1, b - 1, c - 1, d - 1});
-            assert(a - 1 < verts.size());
-            assert(b - 1 < verts.size());
-            assert(c - 1 < verts.size());
-            assert(d - 1 < verts.size());
+            tets.emplace_back(std::array<size_t, 4>{a, b, c, d});
+            assert(a < verts.size());
+            assert(b < verts.size());
+            assert(c < verts.size());
+            assert(d < verts.size());
             // tets.emplace_back(std::vector<size_t>{a , b , c , d });
-            assert(idx == tets.size());
+            assert(idx + 1 == tets.size());
         }
 
         ele.close();
+    }
+    else {
+        cerr << "Error: could not open elePath: " << elePath << "\n";
     }
 
     std::vector<std::array<int, 4>> neighbors;
@@ -559,10 +565,13 @@ TetMesh* TetMesh::loadFromFile(string elePath) {
             int idx, a, b, c, d;
             ss >> idx >> a >> b >> c >> d;
             neighbors.emplace_back(std::array<int, 4>{a, b, c, d});
-            assert(idx == (int) neighbors.size());
+            assert(idx+1 == (int) neighbors.size());
         }
 
         neigh.close();
+    }
+    else {
+        cerr << "Error: could not open neighPath: " << neighPath << "\n";
     }
 
     return TetMesh::construct(verts, tets, neighbors);
